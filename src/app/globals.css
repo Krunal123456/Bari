@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+  
+  --color-maroon-50: #fcf3f6;
+  --color-maroon-100: #fae4ed;
+  --color-maroon-200: #f5ccd9;
+  --color-maroon-300: #efa4bc;
+  --color-maroon-400: #e57295;
+  --color-maroon-500: #d84572;
+  --color-maroon-600: #c22556;
+  --color-maroon-700: #a41843;
+  --color-maroon-800: #89163b;
+  --color-maroon-900: #5d001e; /* Primary Brand */
+
+  --color-gold-50: #fbf9eb;
+  --color-gold-100: #f6f0c8;
+  --color-gold-200: #efe29a;
+  --color-gold-300: #e6ce63;
+  --color-gold-400: #dec13e;
+  --color-gold-500: #c5a059; /* Primary Accent */
+  --color-gold-600: #a47e3c;
+  --color-gold-700: #835f32;
+  --color-gold-800: #6d4d2f;
+  --color-gold-900: #593f2a;
+
+  --color-ivory-50: #fffff0; /* Background */
+  --color-ivory-100: #fefce8;
+  --color-ivory-200: #fef9c3;
+  --color-ivory-300: #fef08a;
+}
+
+/* Utilities */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+body {
+  background-color: var(--color-ivory-50);
+  color: var(--color-maroon-900);
+}

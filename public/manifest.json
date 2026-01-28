@@ -1,0 +1,21 @@
+{
+    "name": "Bari Samaj Community",
+    "short_name": "Bari Samaj",
+    "description": "Bari Samaj Community Application - Unity & Tradition",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#fffff0",
+    "theme_color": "#5D001E",
+    "icons": [
+        {
+            "src": "/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
