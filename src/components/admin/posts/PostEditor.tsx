@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Post, PostType, PostPriority, PostVisibility, PostStatus } from "@/lib/types";
 import { postService } from "@/services/postService";
-import { X, Upload, Loader2, Save } from "lucide-react";
+import { X, Upload, Loader2, Save, Image as ImageIcon, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface PostEditorProps {
@@ -30,6 +30,39 @@ export function PostEditor({ post, onClose, onSave }: PostEditorProps) {
 
     const [uploading, setUploading] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [uploadedImages, setUploadedImages] = useState<string[]>(post?.images || []);
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files) return;
+
+        setUploading(true);
+        try {
+            for (const file of Array.from(files)) {
+                // Validate file type and size
+                if (!file.type.startsWith("image/")) {
+                    alert("Please upload only image files");
+                    continue;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("Image size must be less than 5MB");
+                    continue;
+                }
+
+                const url = await postService.uploadFile(file, "posts/images");
+                setUploadedImages((prev) => [...prev, url]);
+            }
+        } catch (error) {
+            console.error("Error uploading image:", error);
+            alert("Failed to upload image");
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const removeImage = (index: number) => {
+        setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+    };
 
     const onSubmit = async (data: Post) => {
         setSaving(true);
@@ -37,6 +70,7 @@ export function PostEditor({ post, onClose, onSave }: PostEditorProps) {
             // Convert date strings to timestamps if needed (handling plain inputs)
             const payload = {
                 ...data,
+                images: uploadedImages,
                 // Simple date handling for MVP - in real app, convert to Firestore Timestamps
                 scheduledAt: data.scheduledAt ? new Date(data.scheduledAt) : null,
                 expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
@@ -108,6 +142,54 @@ export function PostEditor({ post, onClose, onSave }: PostEditorProps) {
                             placeholder="Write your content here..."
                         />
                         {errors.content && <span className="text-red-500 text-xs">Content is required</span>}
+                    </div>
+
+                    {/* Image Upload */}
+                    <div>
+                        <label className="block text-sm font-medium text-maroon-700 mb-2">Images</label>
+                        <label className="flex items-center justify-center gap-2 w-full px-4 py-3 border-2 border-dashed border-maroon-300 rounded-lg cursor-pointer hover:bg-maroon-50 transition-colors">
+                            <input
+                                type="file"
+                                multiple
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                disabled={uploading}
+                                className="hidden"
+                            />
+                            {uploading ? (
+                                <>
+                                    <Loader2 size={18} className="animate-spin text-maroon-600" />
+                                    <span className="text-maroon-600 font-medium">Uploading...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <ImageIcon size={18} className="text-maroon-600" />
+                                    <span className="text-maroon-600 font-medium">Click to upload images</span>
+                                </>
+                            )}
+                        </label>
+
+                        {/* Image Preview Grid */}
+                        {uploadedImages.length > 0 && (
+                            <div className="mt-3 grid grid-cols-3 gap-3">
+                                {uploadedImages.map((url, index) => (
+                                    <div key={index} className="relative group">
+                                        <img
+                                            src={url}
+                                            alt={`Upload ${index + 1}`}
+                                            className="w-full h-24 object-cover rounded-lg"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeImage(index)}
+                                            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center"
+                                        >
+                                            <Trash2 size={18} className="text-white" />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* Meta Grid */}
