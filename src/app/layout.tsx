@@ -36,6 +36,7 @@ export const viewport: Viewport = {
 import { AuthProvider } from "@/contexts/AuthContext";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import { NotificationProvider } from "@/components/providers/NotificationProvider";
 
 export default function RootLayout({
   children,
@@ -46,9 +47,11 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable} antialiased scroll-smooth`}>
       <body className="bg-ivory-50 text-maroon-900 font-sans min-h-screen flex flex-col pb-16 md:pb-0">
         <AuthProvider>
-          {children}
-          <InstallPrompt />
-          <MobileNav />
+          <NotificationProvider>
+            {children}
+            <InstallPrompt />
+            <MobileNav />
+          </NotificationProvider>
         </AuthProvider>
       </body>
     </html>

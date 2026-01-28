@@ -10,7 +10,8 @@ import {
     where,
     orderBy,
     serverTimestamp,
-    Timestamp
+    Timestamp,
+    writeBatch
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
@@ -112,6 +113,53 @@ export const postService = {
         } catch (error) {
             console.error("Error uploading file:", error);
             throw error;
+        }
+    },
+
+    // Send push notification to all users when post is published
+    async sendNotificationToUsers(postId: string, post: Post) {
+        try {
+            // Get all user notification tokens
+            const tokensSnapshot = await getDocs(collection(db, "userNotificationTokens"));
+            const tokens: string[] = [];
+            
+            tokensSnapshot.forEach((docSnapshot) => {
+                const token = docSnapshot.data().token;
+                if (token) {
+                    tokens.push(token);
+                }
+            });
+
+            if (tokens.length === 0) {
+                console.warn("No user tokens found for notifications");
+                return;
+            }
+
+            // Call the backend API to send notifications
+            // This would be handled by a Cloud Function in production
+            const response = await fetch("/api/send-notification", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    tokens,
+                    title: post.title,
+                    body: post.content.substring(0, 100) + "...",
+                    data: {
+                        postId,
+                        type: post.type,
+                        priority: post.priority,
+                    },
+                }),
+            });
+
+            if (!response.ok) {
+                console.error("Failed to send notifications");
+            }
+        } catch (error) {
+            console.error("Error sending notifications:", error);
+            // Don't throw - notifications failing shouldn't break post creation
         }
     }
 };

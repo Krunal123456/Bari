@@ -4,6 +4,7 @@ import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getMessaging, isSupported as isMessagingSupported } from "firebase/messaging";
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
@@ -21,6 +22,7 @@ let auth: any;
 let db: any;
 let storage: any;
 let analytics: any;
+let messaging: any;
 
 // Only initialize Firebase on the client side
 if (typeof window !== "undefined" && firebaseConfig.apiKey) {
@@ -34,6 +36,13 @@ if (typeof window !== "undefined" && firebaseConfig.apiKey) {
             analytics = getAnalytics(app);
         }
     });
+
+    // Initialize Firebase Cloud Messaging
+    isMessagingSupported().then((supported) => {
+        if (supported) {
+            messaging = getMessaging(app);
+        }
+    });
 }
 
-export { app, auth, db, storage, analytics };
+export { app, auth, db, storage, analytics, messaging };

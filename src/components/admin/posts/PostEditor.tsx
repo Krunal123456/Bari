@@ -42,13 +42,25 @@ export function PostEditor({ post, onClose, onSave }: PostEditorProps) {
                 expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
             };
 
+            const createdPostId = post?.id;
+            
             if (post?.id) {
                 await postService.updatePost(post.id, payload);
+                
+                // If status changed to published, send notifications
+                if (payload.status === "published" && post.status !== "published") {
+                    await postService.sendNotificationToUsers(post.id, payload as Post);
+                }
             } else {
-                await postService.createPost({
+                const newPostId = await postService.createPost({
                     ...payload,
                     createdBy: "admin", // Replace with actual user ID in real usage
                 } as any);
+                
+                // Send notifications if post is published immediately
+                if (payload.status === "published") {
+                    await postService.sendNotificationToUsers(newPostId, payload as Post);
+                }
             }
             onSave();
         } catch (error) {
