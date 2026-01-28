@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ImageSequenceCanvas } from "@/components/scrollytelling/ImageSequenceCanvas";
 import { ScrollSection } from "@/components/scrollytelling/ScrollSection";
 import { NewsFeed } from "@/components/home/NewsFeed";
+import { PostsFeed } from "@/components/home/PostsFeed";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -52,7 +53,12 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Integrated News Feed */}
+          {/* Admin Posts Feed - Dynamic & Real-Time */}
+          <div className="w-full max-w-6xl mx-auto px-4">
+            <PostsFeed />
+          </div>
+
+          {/* News Feed Section */}
           <div className="w-full max-w-6xl mx-auto">
             <NewsFeed />
           </div>

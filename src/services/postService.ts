@@ -11,7 +11,10 @@ import {
     orderBy,
     serverTimestamp,
     Timestamp,
-    writeBatch
+    writeBatch,
+    onSnapshot,
+    Query,
+    QueryConstraint
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
@@ -113,6 +116,109 @@ export const postService = {
         } catch (error) {
             console.error("Error uploading file:", error);
             throw error;
+        }
+    },
+
+    // Get active public posts for home page - with real-time listener
+    listenToActivePublicPosts(
+        callback: (posts: Post[]) => void,
+        onError?: (error: Error) => void
+    ) {
+        try {
+            const constraints: QueryConstraint[] = [
+                where("status", "==", "published"),
+                where("visibility", "in", ["public", "private"]),
+                orderBy("isPinned", "desc"),
+                orderBy("priority", "desc"),
+                orderBy("createdAt", "desc")
+            ];
+
+            const q = query(collection(db, COLLECTION_NAME), ...constraints);
+
+            const unsubscribe = onSnapshot(
+                q,
+                (querySnapshot) => {
+                    const now = new Date();
+                    const posts = querySnapshot.docs
+                        .map(doc => ({ id: doc.id, ...doc.data() } as Post))
+                        .filter(post => {
+                            // Filter scheduled and expired posts
+                            const scheduledTime = post.scheduledAt?.toDate?.() || null;
+                            const expiryTime = post.expiresAt?.toDate?.() || null;
+
+                            if (scheduledTime && scheduledTime > now) return false;
+                            if (expiryTime && expiryTime < now) return false;
+
+                            // Don't show admin-only posts
+                            if (post.visibility === "admin") return false;
+
+                            return true;
+                        });
+
+                    callback(posts);
+                },
+                (error) => {
+                    console.error("Error listening to active posts:", error);
+                    if (onError) onError(error as Error);
+                }
+            );
+
+            return unsubscribe;
+        } catch (error) {
+            console.error("Error setting up listener:", error);
+            callback([]);
+            return () => {};
+        }
+    },
+
+    // Get posts visible to logged-in users (for dashboard)
+    listenToUserNotifications(
+        callback: (posts: Post[]) => void,
+        onError?: (error: Error) => void
+    ) {
+        try {
+            const constraints: QueryConstraint[] = [
+                where("status", "==", "published"),
+                where("visibility", "in", ["public", "private"]),
+                orderBy("priority", "desc"),
+                orderBy("createdAt", "desc")
+            ];
+
+            const q = query(collection(db, COLLECTION_NAME), ...constraints);
+
+            const unsubscribe = onSnapshot(
+                q,
+                (querySnapshot) => {
+                    const now = new Date();
+                    const posts = querySnapshot.docs
+                        .map(doc => ({ id: doc.id, ...doc.data() } as Post))
+                        .filter(post => {
+                            // Filter scheduled and expired posts
+                            const scheduledTime = post.scheduledAt?.toDate?.() || null;
+                            const expiryTime = post.expiresAt?.toDate?.() || null;
+
+                            if (scheduledTime && scheduledTime > now) return false;
+                            if (expiryTime && expiryTime < now) return false;
+
+                            // Don't show admin-only posts
+                            if (post.visibility === "admin") return false;
+
+                            return true;
+                        });
+
+                    callback(posts);
+                },
+                (error) => {
+                    console.error("Error listening to notifications:", error);
+                    if (onError) onError(error as Error);
+                }
+            );
+
+            return unsubscribe;
+        } catch (error) {
+            console.error("Error setting up listener:", error);
+            callback([]);
+            return () => {};
         }
     },
 

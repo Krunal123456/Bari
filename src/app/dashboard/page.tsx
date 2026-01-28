@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Sparkles, Users, Calendar } from "lucide-react";
+import { PostsNotifications } from "@/components/dashboard/PostsNotifications";
 
 export default function DashboardPage() {
     return (
@@ -34,10 +35,8 @@ export default function DashboardPage() {
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-maroon-50 p-6">
-                <h2 className="text-xl font-serif font-bold text-maroon-900 mb-4">Recent Activity</h2>
-                <div className="h-32 flex items-center justify-center text-maroon-400 italic bg-ivory-50 rounded-lg">
-                    No recent activity to show.
-                </div>
+                <h2 className="text-xl font-serif font-bold text-maroon-900 mb-4">Admin Announcements & Updates</h2>
+                <PostsNotifications />
             </div>
         </div>
     );
