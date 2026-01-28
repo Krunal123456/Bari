@@ -1,6 +1,6 @@
 export type PostType = 'announcement' | 'event' | 'matrimony' | 'update' | 'general';
 export type PostPriority = 'normal' | 'high' | 'emergency';
-export type PostVisibility = 'public' | 'private'; // private = logged-in users only
+export type PostVisibility = 'public' | 'private' | 'admin'; // private = logged-in users only, admin = admin only
 export type PostStatus = 'draft' | 'published' | 'archived';
 
 export interface Post {
