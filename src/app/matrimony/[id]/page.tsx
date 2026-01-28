@@ -1,17 +1,22 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState, useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Navbar } from "@/components/layout/Navbar";
+import { useAuth } from "@/contexts/AuthContext";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Download, Phone, Mail } from "lucide-react";
+import { ArrowLeft, Download, Phone, Mail, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function ProfileDetail() {
     const { id } = useParams();
+    const { user } = useAuth();
     const [profile, setProfile] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (!id) return;
@@ -20,18 +25,50 @@ export default function ProfileDetail() {
                 const docRef = doc(db, "matrimony_profiles", id as string);
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
-                    setProfile({ id: docSnap.id, ...docSnap.data() });
+                    const data = docSnap.data();
+                    if (data.status !== "approved") {
+                        setError("This profile is not available.");
+                        setProfile(null);
+                    } else {
+                        setProfile({ id: docSnap.id, ...data });
+                    }
+                } else {
+                    setError("Profile not found.");
                 }
-            } catch (error) {
-                console.error("Error:", error);
+            } catch (err) {
+                console.error("Error fetching profile:", err);
+                setError("Failed to load profile. Please try again.");
             }
             setLoading(false);
         };
         fetchProfile();
     }, [id]);
 
-    if (loading) return <div className="min-h-screen bg-ivory-50 flex items-center justify-center">Loading...</div>;
-    if (!profile) return <div className="min-h-screen bg-ivory-50 flex items-center justify-center">Profile not found.</div>;
+    if (loading) {
+        return (
+            <main className="min-h-screen bg-ivory-50 flex items-center justify-center">
+                <Navbar />
+                <div className="flex flex-col items-center justify-center pt-24">
+                    <Loader2 size={48} className="text-maroon-600 animate-spin mb-4" />
+                    <p className="text-maroon-600 font-medium">Loading profile...</p>
+                </div>
+            </main>
+        );
+    }
+
+    if (error || !profile) {
+        return (
+            <main className="min-h-screen bg-ivory-50 flex flex-col items-center justify-center">
+                <Navbar />
+                <div className="text-center pt-24">
+                    <p className="text-xl text-maroon-600 mb-6">{error || "Profile not found."}</p>
+                    <Link href="/matrimony" className="inline-block px-6 py-3 bg-maroon-900 text-white rounded-lg font-medium hover:bg-maroon-800 transition-colors">
+                        Back to Matrimony
+                    </Link>
+                </div>
+            </main>
+        );
+    }
 
     return (
         <main className="min-h-screen bg-ivory-50 font-sans pb-12">

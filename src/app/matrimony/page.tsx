@@ -1,11 +1,13 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState, useEffect } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
-import { Filter, Search } from "lucide-react";
+import { Filter, Loader2 } from "lucide-react";
 
 interface Profile {
     id: string;
@@ -25,12 +27,13 @@ export default function MatrimonyListing() {
         const fetchProfiles = async () => {
             setLoading(true);
             try {
-                let q = query(collection(db, "matrimony_profiles"), where("status", "==", "approved"));
-                // In a real app, we would add more dynamic filters here
+                const conditions = [where("status", "==", "approved")];
+                
                 if (filterGender !== "All") {
-                    q = query(q, where("gender", "==", filterGender));
+                    conditions.push(where("gender", "==", filterGender));
                 }
 
+                const q = query(collection(db, "matrimony_profiles"), ...conditions);
                 const querySnapshot = await getDocs(q);
                 const fetched: Profile[] = [];
                 querySnapshot.forEach((doc) => {
@@ -39,6 +42,7 @@ export default function MatrimonyListing() {
                 setProfiles(fetched);
             } catch (error) {
                 console.error("Error fetching profiles:", error);
+                setProfiles([]);
             }
             setLoading(false);
         };
@@ -80,10 +84,9 @@ export default function MatrimonyListing() {
                 </div>
 
                 {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">
-                        {[1, 2, 3, 4, 5, 6].map((i) => (
-                            <div key={i} className="bg-white h-64 rounded-xl border border-maroon-50" />
-                        ))}
+                    <div className="flex flex-col items-center justify-center py-20">
+                        <Loader2 size={48} className="text-maroon-600 animate-spin mb-4" />
+                        <p className="text-maroon-600 font-medium">Loading profiles...</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
