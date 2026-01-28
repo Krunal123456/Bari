@@ -8,11 +8,9 @@ import { useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import Link from "next/link";
 import { LayoutDashboard, Users, Heart, FileText, Settings, LogOut } from "lucide-react";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-    const { user, loading } = useAuth();
+    const { user, loading, logout } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
@@ -25,8 +23,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (!user) return null;
 
     const handleLogout = async () => {
-        await signOut(auth);
-        router.push("/");
+        try {
+            await logout();
+            router.push("/");
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
     };
 
     const sidebarLinks = [

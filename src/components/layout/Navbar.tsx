@@ -2,13 +2,18 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, User, Heart } from "lucide-react";
+import { Menu, X, User, Heart, LogOut, Settings } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const { user, logout } = useAuth();
+    const router = useRouter();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -17,6 +22,16 @@ export function Navbar() {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            router.push("/");
+            setIsProfileOpen(false);
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
 
     const navLinks = [
         { name: "Home", href: "/" },
@@ -57,25 +72,95 @@ export function Navbar() {
                 </div>
 
                 <div className="hidden md:flex items-center gap-4">
-                    <Link
-                        href="/login"
-                        className={clsx(
-                            "flex items-center gap-2 px-4 py-2 rounded-full border transition-colors",
-                            isScrolled
-                                ? "border-maroon-200 text-maroon-900 hover:bg-maroon-50"
-                                : "border-ivory-200/50 text-ivory-50 hover:bg-white/10"
-                        )}
-                    >
-                        <User size={18} />
-                        <span>Login</span>
-                    </Link>
-                    <Link
-                        href="/donate"
-                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-gold-500 text-white hover:bg-gold-600 transition-colors shadow-sm"
-                    >
-                        <Heart size={18} />
-                        <span>Donate</span>
-                    </Link>
+                    {user ? (
+                        <div className="relative">
+                            <button
+                                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                className="flex items-center gap-3 px-4 py-2 rounded-full hover:bg-white/10 transition-colors"
+                            >
+                                {user.photoURL ? (
+                                    <img
+                                        src={user.photoURL}
+                                        alt={user.displayName || "User"}
+                                        className="w-8 h-8 rounded-full object-cover border-2 border-gold-500"
+                                    />
+                                ) : (
+                                    <div className="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center text-white">
+                                        <User size={16} />
+                                    </div>
+                                )}
+                                <span className={clsx("font-medium text-sm", isScrolled ? "text-maroon-900" : "text-ivory-50")}>
+                                    {user.displayName?.split(" ")[0] || "Profile"}
+                                </span>
+                            </button>
+
+                            {/* Profile Dropdown */}
+                            <AnimatePresence>
+                                {isProfileOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-maroon-100 py-2 z-50"
+                                    >
+                                        {user.email && (
+                                            <div className="px-4 py-3 border-b border-maroon-100">
+                                                <p className="text-xs text-gray-500">Logged in as</p>
+                                                <p className="text-sm font-medium text-maroon-900 truncate">
+                                                    {user.email}
+                                                </p>
+                                            </div>
+                                        )}
+                                        <Link
+                                            href="/dashboard/profile"
+                                            className="flex items-center gap-3 px-4 py-2 text-maroon-900 hover:bg-maroon-50 transition-colors"
+                                            onClick={() => setIsProfileOpen(false)}
+                                        >
+                                            <User size={18} />
+                                            <span>My Profile</span>
+                                        </Link>
+                                        <Link
+                                            href="/dashboard"
+                                            className="flex items-center gap-3 px-4 py-2 text-maroon-900 hover:bg-maroon-50 transition-colors"
+                                            onClick={() => setIsProfileOpen(false)}
+                                        >
+                                            <Settings size={18} />
+                                            <span>Dashboard</span>
+                                        </Link>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full flex items-center gap-3 px-4 py-2 text-gold-600 hover:bg-gold-50 transition-colors border-t border-maroon-100 text-left"
+                                        >
+                                            <LogOut size={18} />
+                                            <span>Logout</span>
+                                        </button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    ) : (
+                        <>
+                            <Link
+                                href="/login"
+                                className={clsx(
+                                    "flex items-center gap-2 px-4 py-2 rounded-full border transition-colors",
+                                    isScrolled
+                                        ? "border-maroon-200 text-maroon-900 hover:bg-maroon-50"
+                                        : "border-ivory-200/50 text-ivory-50 hover:bg-white/10"
+                                )}
+                            >
+                                <User size={18} />
+                                <span>Login</span>
+                            </Link>
+                            <Link
+                                href="/donate"
+                                className="flex items-center gap-2 px-4 py-2 rounded-full bg-gold-500 text-white hover:bg-gold-600 transition-colors shadow-sm"
+                            >
+                                <Heart size={18} />
+                                <span>Donate</span>
+                            </Link>
+                        </>
+                    )}
                 </div>
 
                 {/* Mobile Toggle */}
@@ -108,20 +193,56 @@ export function Navbar() {
                                 </Link>
                             ))}
                             <div className="h-px bg-maroon-100 my-2" />
-                            <Link
-                                href="/login"
-                                className="flex items-center gap-2 text-maroon-900"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                <User size={20} /> Login
-                            </Link>
-                            <Link
-                                href="/donate"
-                                className="flex items-center gap-2 text-gold-700 font-semibold"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                <Heart size={20} /> Donate
-                            </Link>
+                            {user ? (
+                                <>
+                                    {user.email && (
+                                        <div className="px-2 py-2 bg-maroon-50 rounded">
+                                            <p className="text-xs text-gray-500">Logged in as</p>
+                                            <p className="text-sm font-medium text-maroon-900 truncate">
+                                                {user.email}
+                                            </p>
+                                        </div>
+                                    )}
+                                    <Link
+                                        href="/dashboard/profile"
+                                        className="flex items-center gap-2 text-maroon-900 font-medium"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        <User size={20} /> My Profile
+                                    </Link>
+                                    <Link
+                                        href="/dashboard"
+                                        className="flex items-center gap-2 text-maroon-900 font-medium"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        <Settings size={20} /> Dashboard
+                                    </Link>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full flex items-center justify-center gap-2 text-white bg-gold-500 px-4 py-2 rounded-full font-medium hover:bg-gold-600"
+                                    >
+                                        <LogOut size={20} />
+                                        Logout
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <Link
+                                        href="/login"
+                                        className="flex items-center gap-2 text-maroon-900"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        <User size={20} /> Login
+                                    </Link>
+                                    <Link
+                                        href="/donate"
+                                        className="flex items-center gap-2 text-gold-700 font-semibold"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        <Heart size={20} /> Donate
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </motion.div>
                 )}
