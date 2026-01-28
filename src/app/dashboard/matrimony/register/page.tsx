@@ -97,11 +97,15 @@ export default function MatrimonyRegister() {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                 {/* Section 1: Basic Details */}
                 <div>
-                    <h3 className="text-lg font-bold text-maroon-800 border-b border-maroon-100 pb-2 mb-4">Basic Information</h3>
+                    <h3 className="text-lg font-bold text-maroon-800 border-b-2 border-maroon-300 pb-3 mb-6">Basic Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="label">Profile For</label>
-                            <select {...register("profileFor", { required: true })} className="input-field">
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Profile For <span className="text-red-600">*</span></label>
+                            <select 
+                                {...register("profileFor", { required: true })} 
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 font-medium"
+                            >
+                                <option value="">Select Profile For...</option>
                                 <option value="Self">Self</option>
                                 <option value="Son">Son</option>
                                 <option value="Daughter">Daughter</option>
@@ -109,27 +113,47 @@ export default function MatrimonyRegister() {
                             </select>
                         </div>
                         <div>
-                            <label className="label">Full Name Of Candidate</label>
-                            <input {...register("fullName", { required: true })} className="input-field" />
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Full Name Of Candidate <span className="text-red-600">*</span></label>
+                            <input 
+                                {...register("fullName", { required: true })} 
+                                placeholder="Enter full name"
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 placeholder-maroon-400"
+                            />
                         </div>
                         <div>
-                            <label className="label">Date of Birth</label>
-                            <input type="date" {...register("dob", { required: true })} className="input-field" />
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Date of Birth <span className="text-red-600">*</span></label>
+                            <input 
+                                type="date" 
+                                {...register("dob", { required: true })} 
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900"
+                            />
                         </div>
                         <div>
-                            <label className="label">Gender</label>
-                            <select {...register("gender", { required: true })} className="input-field">
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Gender <span className="text-red-600">*</span></label>
+                            <select 
+                                {...register("gender", { required: true })} 
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 font-medium"
+                            >
+                                <option value="">Select Gender...</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                             </select>
                         </div>
                         <div>
-                            <label className="label">Height</label>
-                            <input placeholder="e.g. 5' 10''" {...register("height", { required: true })} className="input-field" />
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Height <span className="text-red-600">*</span></label>
+                            <input 
+                                placeholder="e.g. 5' 10''"
+                                {...register("height", { required: true })} 
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 placeholder-maroon-400"
+                            />
                         </div>
                         <div>
-                            <label className="label">Marital Status</label>
-                            <select {...register("maritalStatus", { required: true })} className="input-field">
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Marital Status <span className="text-red-600">*</span></label>
+                            <select 
+                                {...register("maritalStatus", { required: true })} 
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 font-medium"
+                            >
+                                <option value="">Select Status...</option>
                                 <option value="Never Married">Never Married</option>
                                 <option value="Divorced">Divorced</option>
                                 <option value="Widowed">Widowed</option>
@@ -140,66 +164,94 @@ export default function MatrimonyRegister() {
 
                 {/* Section 2: Education & Career */}
                 <div>
-                    <h3 className="text-lg font-bold text-maroon-800 border-b border-maroon-100 pb-2 mb-4">Education & Career</h3>
+                    <h3 className="text-lg font-bold text-maroon-800 border-b-2 border-maroon-300 pb-3 mb-6">Education & Career</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="label">Highest Qualification</label>
-                            <input {...register("education", { required: true })} className="input-field" />
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Highest Qualification <span className="text-red-600">*</span></label>
+                            <input 
+                                placeholder="e.g. Bachelor's Degree"
+                                {...register("education", { required: true })} 
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 placeholder-maroon-400"
+                            />
                         </div>
                         <div>
-                            <label className="label">Occupation</label>
-                            <input {...register("occupation", { required: true })} className="input-field" />
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Occupation <span className="text-red-600">*</span></label>
+                            <input 
+                                placeholder="e.g. Software Engineer"
+                                {...register("occupation", { required: true })} 
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 placeholder-maroon-400"
+                            />
                         </div>
                         <div>
-                            <label className="label">Annual Income</label>
-                            <input {...register("income")} className="input-field" />
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Annual Income</label>
+                            <input 
+                                placeholder="e.g. 50 Lac - 1 Crore"
+                                {...register("income")} 
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 placeholder-maroon-400"
+                            />
                         </div>
                     </div>
                 </div>
 
                 {/* Section 3: Family & Culture */}
                 <div>
-                    <h3 className="text-lg font-bold text-maroon-800 border-b border-maroon-100 pb-2 mb-4">Family & Culture</h3>
+                    <h3 className="text-lg font-bold text-maroon-800 border-b-2 border-maroon-300 pb-3 mb-6">Family & Culture</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="label">Gotra (if applicable)</label>
-                            <input placeholder="Optional" {...register("gotra")} className="input-field" />
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Gotra (if applicable)</label>
+                            <input 
+                                placeholder="e.g. Bharadwaj"
+                                {...register("gotra")} 
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 placeholder-maroon-400"
+                            />
                         </div>
                         <div>
-                            <label className="label">Religion</label>
-                            <input placeholder="e.g. Hindu" {...register("religion")} className="input-field" />
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Religion</label>
+                            <input 
+                                placeholder="e.g. Hindu"
+                                {...register("religion")} 
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 placeholder-maroon-400"
+                            />
                         </div>
                         <div>
-                            <label className="label">Caste</label>
-                            <input placeholder="Optional" {...register("caste")} className="input-field" />
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Caste</label>
+                            <input 
+                                placeholder="Optional"
+                                {...register("caste")} 
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 placeholder-maroon-400"
+                            />
                         </div>
                         <div>
-                            <label className="label">City / Location</label>
-                            <input {...register("location")} className="input-field" />
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">City / Location <span className="text-red-600">*</span></label>
+                            <input 
+                                placeholder="e.g. Mumbai, Maharashtra"
+                                {...register("location")} 
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 placeholder-maroon-400"
+                            />
                         </div>
                     </div>
                 </div>
 
                 {/* Section 4: Additional Information */}
                 <div>
-                    <h3 className="text-lg font-bold text-maroon-800 border-b border-maroon-100 pb-2 mb-4">About You</h3>
+                    <h3 className="text-lg font-bold text-maroon-800 border-b-2 border-maroon-300 pb-3 mb-6">About You</h3>
                     <div className="space-y-4">
                         <div>
-                            <label className="label">About Yourself (Hobbies, Interests, etc.)</label>
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">About Yourself (Hobbies, Interests, etc.)</label>
                             <textarea
-                                placeholder="Tell us about yourself..."
+                                placeholder="Tell us about yourself, your hobbies, interests, and lifestyle..."
                                 rows={4}
                                 {...register("about")}
-                                className="w-full px-4 py-2 border border-maroon-200 rounded-lg focus:ring-2 focus:ring-maroon-500 outline-none bg-ivory-50"
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 placeholder-maroon-400 font-normal resize-none"
                             />
                         </div>
                         <div>
-                            <label className="label">What are you looking for?</label>
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">What are you looking for?</label>
                             <textarea
-                                placeholder="Describe your ideal partner..."
+                                placeholder="Describe your ideal partner, what qualities you value most..."
                                 rows={4}
                                 {...register("lookingFor")}
-                                className="w-full px-4 py-2 border border-maroon-200 rounded-lg focus:ring-2 focus:ring-maroon-500 outline-none bg-ivory-50"
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 placeholder-maroon-400 font-normal resize-none"
                             />
                         </div>
                     </div>
@@ -207,15 +259,24 @@ export default function MatrimonyRegister() {
 
                 {/* Section 5: Contact Information */}
                 <div>
-                    <h3 className="text-lg font-bold text-maroon-800 border-b border-maroon-100 pb-2 mb-4">Contact Information</h3>
+                    <h3 className="text-lg font-bold text-maroon-800 border-b-2 border-maroon-300 pb-3 mb-6">Contact Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="label">Phone Number</label>
-                            <input type="tel" {...register("phone", { required: true })} placeholder="+91 XXXXXXXXXX" className="input-field" />
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Phone Number <span className="text-red-600">*</span></label>
+                            <input 
+                                type="tel" 
+                                {...register("phone", { required: true })} 
+                                placeholder="+91 XXXXXXXXXX"
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 placeholder-maroon-400"
+                            />
                         </div>
                         <div>
-                            <label className="label">Preferred Contact Time</label>
-                            <select {...register("preferredContactTime")} className="input-field">
+                            <label className="block text-sm font-semibold text-maroon-700 mb-2">Preferred Contact Time</label>
+                            <select 
+                                {...register("preferredContactTime")} 
+                                className="w-full px-4 py-3 border-2 border-maroon-300 rounded-lg focus:border-maroon-600 focus:ring-2 focus:ring-maroon-200 outline-none bg-white text-maroon-900 font-medium"
+                            >
+                                <option value="">Select preferred time...</option>
                                 <option value="Morning">Morning (9 AM - 12 PM)</option>
                                 <option value="Afternoon">Afternoon (12 PM - 5 PM)</option>
                                 <option value="Evening">Evening (5 PM - 9 PM)</option>
@@ -226,9 +287,9 @@ export default function MatrimonyRegister() {
                     </div>
                 </div>
 
-                <div className="bg-maroon-50 border border-maroon-200 rounded-lg p-4 mb-6">
-                    <p className="text-sm text-maroon-700">
-                        <strong>Note:</strong> Your profile will be reviewed by the admin team before being published. You will receive an email notification once it's approved.
+                <div className="bg-maroon-50 border-2 border-maroon-200 rounded-lg p-5 mb-8">
+                    <p className="text-sm text-maroon-800 font-medium">
+                        <strong className="text-maroon-900">📋 Note:</strong> Your profile will be reviewed by the admin team before being published. You will receive an email notification once it's approved.
                     </p>
                 </div>
 
@@ -236,27 +297,18 @@ export default function MatrimonyRegister() {
                     <button
                         type="submit"
                         disabled={submitting || success}
-                        className="flex-1 py-3 bg-maroon-900 text-ivory-50 rounded-lg font-bold hover:bg-maroon-800 transition-colors shadow-md disabled:opacity-70"
+                        className="flex-1 py-4 bg-maroon-900 text-ivory-50 rounded-lg font-bold hover:bg-maroon-800 transition-colors shadow-md disabled:opacity-70 text-lg"
                     >
                         {submitting ? "Submitting..." : success ? "Profile Created!" : "Submit Profile"}
                     </button>
                     <Link
                         href="/matrimony"
-                        className="flex-1 py-3 bg-gray-200 text-gray-800 rounded-lg font-bold hover:bg-gray-300 transition-colors text-center"
+                        className="flex-1 py-4 bg-gray-300 text-gray-800 rounded-lg font-bold hover:bg-gray-400 transition-colors text-center text-lg"
                     >
                         Cancel
                     </Link>
                 </div>
             </form>
-
-            <style jsx>{`
-                .label {
-                    @apply block text-sm font-medium text-maroon-700 mb-2;
-                }
-                .input-field {
-                    @apply w-full px-4 py-2.5 border border-maroon-200 rounded-lg focus:ring-2 focus:ring-maroon-500 outline-none bg-ivory-50 text-maroon-900 placeholder-maroon-400;
-                }
-            `}</style>
             </div>
         </div>
     );
