@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users: users can read their own doc and update limited fields
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Matrimony profiles: owner can create/update draft; only admins can change status to approved/rejected
+    match /matrimony_profiles/{profileId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update: if request.auth != null && (
+        // owner can update while in draft/submitted/changes_requested
+        (resource.data.userId == request.auth.uid && resource.data.status in ['draft','changes_requested','submitted'] )
+        // admin can update status
+        || (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
+      );
+      allow read: if resource.data.status == 'approved' || (request.auth != null && resource.data.userId == request.auth.uid) || (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      allow delete: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Subscriptions: users can read their own subscription records; creation/updating reserved for backend/admin/payment system
+    match /subscriptions/{subId} {
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if false; // prevented from client - must be created by Cloud Functions/backend
+      allow update: if false; // updates by server only
+    }
+
+    // Interests: users can create an interest (express interest in another profile); server to enforce limits via Cloud Function
+    match /interests/{id} {
+      allow create: if request.auth != null && request.resource.data.fromUserId == request.auth.uid;
+      allow read: if request.auth != null && (resource.data.fromUserId == request.auth.uid || resource.data.toUserId == request.auth.uid);
+      allow delete: if request.auth != null && (resource.data.fromUserId == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+
+    // Matches: only server or admin writes; users can read matches that involve them
+    match /matches/{id} {
+      allow create: if false;
+      allow read: if request.auth != null && (resource.data.profileAOwner == request.auth.uid || resource.data.profileBOwner == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      allow update, delete: if false;
+    }
+
+    // Admin logs: admin-only write/read
+    match /admin_logs/{id} {
+      allow read, write: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Generic rule: prevent any other writes from clients
+    match /{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

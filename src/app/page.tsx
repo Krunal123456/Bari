@@ -20,7 +20,7 @@ export default function Home() {
   // We can just have a very tall div that ImageSequenceCanvas tracks.
 
   return (
-    <main className="relative bg-ivory-50 min-h-screen">
+    <main className="relative bg-ivory-50 min-h-screen py-8 md:py-12">
       <Navbar />
 
       {/* The 3D Canvas Background */}
@@ -35,8 +35,8 @@ export default function Home() {
             or just start right away. */}
 
         {/* Section 1: Hero */}
-        <ScrollSection align="center" className="min-h-screen flex flex-col items-center justify-end pb-20 gap-8">
-          <div className="bg-white/30 backdrop-blur-md p-8 rounded-3xl border border-white/50 shadow-xl max-w-4xl mx-auto mb-4 ring-1 ring-black/5">
+        <ScrollSection align="center" className="min-h-screen flex flex-col items-center justify-center gap-12">
+          <div className="bg-white/30 backdrop-blur-md p-10 md:p-12 rounded-3xl border border-white/50 shadow-xl max-w-3xl mx-auto mb-6 ring-1 ring-black/5">
             <h1 className="text-5xl md:text-7xl font-serif font-bold text-maroon-950 mb-4 drop-shadow-sm">
               Bari Samaj
             </h1>
@@ -54,19 +54,19 @@ export default function Home() {
           </div>
 
           {/* Admin Posts Feed - Dynamic & Real-Time */}
-          <div className="w-full max-w-6xl mx-auto px-4">
+          <div className="w-full max-w-6xl mx-auto px-4 py-6 space-y-6">
             <PostsFeed />
           </div>
 
           {/* News Feed Section */}
-          <div className="w-full max-w-6xl mx-auto">
+          <div className="w-full max-w-6xl mx-auto px-4 py-6">
             <NewsFeed />
           </div>
         </ScrollSection>
 
         {/* Section 2: Tradition */}
-        <ScrollSection align="left" className="h-[120vh]">
-          <div className="max-w-xl mx-auto md:mx-0 bg-ivory-50/90 backdrop-blur-sm p-8 rounded-2xl border border-gold-200 shadow-xl">
+        <ScrollSection align="left" className="min-h-[70vh] flex items-center">
+          <div className="max-w-3xl mx-auto md:mx-0 bg-ivory-50/90 backdrop-blur-sm p-8 md:p-10 rounded-2xl border border-gold-200 shadow-xl">
             <h2 className="text-4xl md:text-5xl font-serif text-gold-700 mb-4">
               Sacred Traditions
             </h2>
@@ -77,8 +77,8 @@ export default function Home() {
         </ScrollSection>
 
         {/* Section 3: Matrimony */}
-        <ScrollSection align="right" className="h-[120vh]">
-          <div className="max-w-xl mx-auto md:ml-auto bg-ivory-50/90 backdrop-blur-sm p-8 rounded-2xl border border-maroon-100 shadow-xl">
+        <ScrollSection align="right" className="min-h-[70vh] flex items-center">
+          <div className="max-w-3xl mx-auto md:ml-auto bg-ivory-50/90 backdrop-blur-sm p-8 md:p-10 rounded-2xl border border-maroon-100 shadow-xl">
             <h2 className="text-4xl md:text-5xl font-serif text-maroon-900 mb-4">
               Eternal Bonds
             </h2>
@@ -95,8 +95,8 @@ export default function Home() {
         </ScrollSection>
 
         {/* Section 4: Community */}
-        <ScrollSection align="center" className="h-[120vh]">
-          <div className="bg-maroon-900/90 backdrop-blur-sm text-ivory-50 p-10 rounded-2xl shadow-2xl max-w-2xl">
+        <ScrollSection align="center" className="min-h-[70vh] flex items-center">
+          <div className="bg-maroon-900/90 backdrop-blur-sm text-ivory-50 p-8 md:p-10 rounded-2xl shadow-2xl max-w-3xl">
             <h2 className="text-4xl md:text-5xl font-serif text-gold-400 mb-6">
               Stronger Together
             </h2>
@@ -113,7 +113,7 @@ export default function Home() {
         </ScrollSection>
 
         {/* Spacer to allow full scroll completion */}
-        <div className="h-[50vh]" />
+        <div className="h-[30vh]" />
 
         <Footer />
       </div>

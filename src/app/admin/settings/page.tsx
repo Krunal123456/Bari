@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Shield, Bell, Database, Lock, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { AdminManager } from "@/components/admin/AdminManager";
 
 export default function SettingsPage() {
   const { user, logout } = useAuth();
@@ -113,6 +114,15 @@ export default function SettingsPage() {
             </div>
           ))}
         </div>
+      </motion.div>
+
+      {/* Admin Manager */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+      >
+        <AdminManager />
       </motion.div>
 
       {/* Security */}

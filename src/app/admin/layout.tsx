@@ -74,14 +74,17 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin, loading } = useAuth();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Check if user is authenticated (admin role would be better with Firebase custom claims)
-  const isAuthenticated = !!user;
+  // Wait for auth to initialize
+  if (loading) {
+    return null;
+  }
 
-  if (!isAuthenticated) {
+  // Only allow admin users to access admin routes
+  if (!user || !isAdmin) {
     router.replace("/login");
     return null;
   }

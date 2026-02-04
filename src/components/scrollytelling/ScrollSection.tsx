@@ -15,11 +15,11 @@ export function ScrollSection({ children, className, align = "center" }: ScrollS
     const isInView = useInView(ref, { margin: "-30% 0px -30% 0px", once: false });
 
     return (
-        <section className="min-h-screen w-full flex items-center justify-center snap-center relative z-10 pointer-events-none">
+        <section className="min-h-screen w-full flex items-center justify-center snap-center relative z-10 pointer-events-none py-16 md:py-24">
             <div
                 ref={ref}
                 className={clsx(
-                    "container mx-auto px-6 pointer-events-auto",
+                    "container mx-auto max-w-6xl px-6 md:px-8 pointer-events-auto",
                     align === "left" && "text-center md:text-left",
                     align === "center" && "text-center",
                     align === "right" && "text-center md:text-right",

@@ -38,8 +38,9 @@ export async function signInWithGoogle(): Promise<User> {
         photoURL: user.photoURL,
         provider: "google",
         role: "member",
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        onboardingComplete: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       });
     }
 

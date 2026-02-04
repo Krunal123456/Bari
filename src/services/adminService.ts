@@ -164,6 +164,19 @@ export async function approveMatrimonyProfile(
 
     // Log activity
     await logActivity(adminId, adminName, "approved_matrimony_profile", "matrimony_profiles", id);
+
+    // Notify profile owner
+    try {
+      const docRef = doc(db, 'matrimony_profiles', id);
+      const snap = await getDoc(docRef);
+      const ownerId = snap.data()?.userId;
+      if (ownerId) {
+        const { createNotification } = await import('@/services/notificationService');
+        await createNotification(ownerId, 'profile_approved', { profileId: id, adminId });
+      }
+    } catch (err) {
+      console.error('Failed to send approval notification', err);
+    }
   } catch (error) {
     console.error("Error approving profile:", error);
     throw error;

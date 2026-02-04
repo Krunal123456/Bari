@@ -11,7 +11,7 @@ import Link from "next/link";
 
 export default function NewPostPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,6 +64,17 @@ export default function NewPostPage() {
     setLoading(true);
 
     try {
+      if (authLoading) {
+        setError("Authentication initializing. Please wait a moment and try again.");
+        setLoading(false);
+        return;
+      }
+
+      if (!isAdmin) {
+        setError("Permission denied: only administrators can create posts.");
+        setLoading(false);
+        return;
+      }
       if (!formData.title.trim() || !formData.content.trim()) {
         setError("Title and content are required");
         setLoading(false);
@@ -102,6 +113,14 @@ export default function NewPostPage() {
 
   return (
     <div className="max-w-4xl">
+      {authLoading && (
+        <div className="mb-6 p-4 bg-ivory-100 border border-maroon-100 rounded">Initializing authentication…</div>
+      )}
+      {!authLoading && !isAdmin && (
+        <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded">
+          <p className="text-red-900 font-medium">You do not have permission to create posts. Please contact an administrator.</p>
+        </div>
+      )}
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}

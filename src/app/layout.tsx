@@ -44,8 +44,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable} antialiased scroll-smooth`}>
-      <body className="bg-ivory-50 text-maroon-900 font-sans min-h-screen flex flex-col pb-16 md:pb-0">
+    <html lang="en" className={`${inter.variable} ${playfair.variable} antialiased scroll-smooth`} suppressHydrationWarning>
+      <body className="bg-ivory-50 text-maroon-900 font-sans min-h-screen flex flex-col pb-16 md:pb-0" suppressHydrationWarning>
         <AuthProvider>
           <NotificationProvider>
             {children}

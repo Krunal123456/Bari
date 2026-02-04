@@ -18,6 +18,7 @@ interface Member {
 export default function CommunityPage() {
     const [members, setMembers] = useState<Member[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         const fetchMembers = async () => {
@@ -51,6 +52,8 @@ export default function CommunityPage() {
                         <input
                             type="text"
                             placeholder="Search members..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                             className="pl-10 pr-4 py-2 border border-maroon-200 rounded-lg w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-maroon-500"
                         />
                         <Search className="absolute left-3 top-2.5 text-maroon-400" size={18} />
@@ -65,7 +68,15 @@ export default function CommunityPage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {members.map((member) => (
+                        {members.filter(member => {
+                            if (!searchTerm) return true;
+                            const searchLower = searchTerm.toLowerCase();
+                            return (
+                                member.name?.toLowerCase().includes(searchLower) ||
+                                member.gotra?.toLowerCase().includes(searchLower) ||
+                                member.address?.toLowerCase().includes(searchLower)
+                            );
+                        }).map((member) => (
                             <div key={member.id} className="bg-white p-6 rounded-xl shadow-sm border border-maroon-100 flex items-start gap-4 hover:shadow-md transition-shadow">
                                 <div className="w-12 h-12 rounded-full bg-maroon-100 flex-shrink-0 flex items-center justify-center text-maroon-800 font-bold text-lg">
                                     {member.name?.[0] || "?"}
@@ -82,6 +93,19 @@ export default function CommunityPage() {
                                 </div>
                             </div>
                         ))}
+                        {members.filter(member => {
+                            if (!searchTerm) return true;
+                            const searchLower = searchTerm.toLowerCase();
+                            return (
+                                member.name?.toLowerCase().includes(searchLower) ||
+                                member.gotra?.toLowerCase().includes(searchLower) ||
+                                member.address?.toLowerCase().includes(searchLower)
+                            );
+                        }).length === 0 && (
+                                <div className="col-span-full py-12 text-center text-maroon-400">
+                                    <p>No members found matching "{searchTerm}"</p>
+                                </div>
+                            )}
                     </div>
                 )}
             </div>

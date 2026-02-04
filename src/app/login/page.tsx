@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -21,8 +21,15 @@ export default function LoginPage() {
         setLoading(true);
         setError("");
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            router.push("/dashboard");
+            await setPersistence(auth, browserLocalPersistence);
+            const cred = await signInWithEmailAndPassword(auth, email, password);
+            const loggedUser = cred.user;
+            // If user is the admin, redirect to admin area
+            if (loggedUser?.email === "krunalkishortote@gmail.com") {
+                router.push("/admin");
+            } else {
+                router.push("/dashboard");
+            }
         } catch (err: any) {
             setError("Invalid email or password");
         } finally {

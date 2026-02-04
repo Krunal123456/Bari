@@ -28,14 +28,19 @@ export function GoogleSignInButton({
 
     try {
       const user = await signInWithGoogle();
-      
+
       if (onSuccess) {
         onSuccess();
       } else {
-        // Redirect to dashboard
-        setTimeout(() => {
-          router.push(redirectPath);
-        }, 500);
+        // If the signed in user is the designated admin, send to /admin
+        if (user && user.email === "krunalkishortote@gmail.com") {
+          router.push("/admin");
+        } else {
+          // Redirect to dashboard by default
+          setTimeout(() => {
+            router.push(redirectPath);
+          }, 500);
+        }
       }
     } catch (err: any) {
       console.error("Google sign-in failed:", err);

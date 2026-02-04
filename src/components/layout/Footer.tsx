@@ -1,7 +1,10 @@
+"use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Facebook, Instagram, Twitter, Mail, MapPin, Phone } from "lucide-react";
 
 export function Footer() {
+    const router = useRouter();
     return (
         <footer className="bg-maroon-900 text-ivory-100 pt-16 pb-8 font-sans">
             <div className="container mx-auto px-6">
@@ -17,15 +20,31 @@ export function Footer() {
                     {/* Quick Links */}
                     <div>
                         <h4 className="font-serif text-lg font-bold text-gold-200 mb-6">Quick Links</h4>
-                        <ul className="space-y-3">
-                            {["About Us", "Our History", "Executive Committee", "Privacy Policy", "Terms of Service"].map((item) => (
-                                <li key={item}>
-                                    <Link href="#" className="text-maroon-100 hover:text-gold-300 transition-colors">
-                                        {item}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
+                            <ul className="space-y-3">
+                                {[
+                                    { label: 'About Us', href: '/about' },
+                                    { label: 'Our History', href: '/about#history' },
+                                    { label: 'Executive Committee', href: '#' },
+                                    { label: 'Privacy Policy', href: '/privacy' },
+                                    { label: 'Terms of Service', href: '/terms' },
+                                ].map((item) => (
+                                    <li key={item.label}>
+                                        <a
+                                            href={item.href}
+                                            className="text-maroon-100 hover:text-gold-300 transition-colors"
+                                            onClick={(e) => {
+                                                // client-side navigation for reliability
+                                                if (typeof window !== 'undefined') {
+                                                    e.preventDefault();
+                                                    router.push(item.href);
+                                                }
+                                            }}
+                                        >
+                                            {item.label}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
                     </div>
 
                     {/* Services */}

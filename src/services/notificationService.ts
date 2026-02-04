@@ -12,6 +12,7 @@ import {
   where,
   getDocs,
   updateDoc,
+  addDoc,
 } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
 
@@ -148,5 +149,22 @@ export async function removeFCMToken(userId: string) {
     });
   } catch (error) {
     console.error("Error removing FCM token:", error);
+  }
+}
+
+/**
+ * Create an in-app notification record for a user
+ */
+export async function createNotification(userId: string, type: string, payload: Record<string, any>) {
+  try {
+    await addDoc(collection(db, 'notifications'), {
+      userId,
+      type,
+      payload,
+      read: false,
+      createdAt: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error('Failed to create notification:', err);
   }
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { getActiveSubscriptionByUser } from "@/services/subscriptionService";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { motion } from "framer-motion";
@@ -16,6 +17,7 @@ export default function ProfilePage() {
         gotra: ""
     });
     const [message, setMessage] = useState("");
+    const [subscription, setSubscription] = useState<any>(null);
 
     useEffect(() => {
         if (user) {
@@ -31,6 +33,9 @@ export default function ProfilePage() {
                         gotra: data.gotra || ""
                     });
                 }
+
+                const sub = await getActiveSubscriptionByUser(user.uid);
+                setSubscription(sub);
             };
             fetchProfile();
         }
@@ -63,6 +68,25 @@ export default function ProfilePage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 className="text-lg font-medium">Membership</h3>
+                        <p className="text-sm text-maroon-600">Manage your membership and plan status</p>
+                    </div>
+                    <div>
+                        {subscription ? (
+                            <div className="inline-flex items-center gap-3 px-3 py-2 bg-ivory-100 rounded-lg border">
+                                <span className="text-sm font-semibold">{subscription.plan.toUpperCase()}</span>
+                                <span className="text-xs text-maroon-600">Expires {new Date(subscription.expiryDate).toLocaleDateString()}</span>
+                            </div>
+                        ) : (
+                            <div className="inline-flex items-center gap-3 px-3 py-2 bg-ivory-100 rounded-lg border">
+                                <span className="text-sm font-semibold">FREE</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label className="block text-sm font-medium text-maroon-700 mb-1">Full Name</label>

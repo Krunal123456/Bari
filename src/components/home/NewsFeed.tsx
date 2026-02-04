@@ -16,8 +16,8 @@ export function NewsFeed() {
         // Query for active published posts
         const q = query(
             collection(db, "posts"),
-            where("status", "==", "published"),
-            orderBy("createdAt", "desc")
+            where("status", "==", "published")
+            // Removed orderBy to avoid composite index requirement
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -38,7 +38,11 @@ export function NewsFeed() {
             active.sort((a, b) => {
                 if (a.isPinned && !b.isPinned) return -1;
                 if (!a.isPinned && b.isPinned) return 1;
-                return 0; // Already sorted by date in query
+
+                // Sort by date (newest first)
+                const dateA = a.createdAt?.seconds || 0;
+                const dateB = b.createdAt?.seconds || 0;
+                return dateB - dateA;
             });
 
             setPosts(active);
@@ -71,11 +75,10 @@ export function NewsFeed() {
                 <div className="flex flex-wrap gap-2">
                     <button
                         onClick={() => setSelectedType(null)}
-                        className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${
-                            selectedType === null
+                        className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${selectedType === null
                                 ? "bg-maroon-900 text-white"
                                 : "bg-maroon-100 text-maroon-700 hover:bg-maroon-200"
-                        }`}
+                            }`}
                     >
                         All
                     </button>
@@ -83,11 +86,10 @@ export function NewsFeed() {
                         <button
                             key={type}
                             onClick={() => setSelectedType(type)}
-                            className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors capitalize ${
-                                selectedType === type
+                            className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors capitalize ${selectedType === type
                                     ? "bg-maroon-900 text-white"
                                     : "bg-maroon-100 text-maroon-700 hover:bg-maroon-200"
-                            }`}
+                                }`}
                         >
                             {type}
                         </button>

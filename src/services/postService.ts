@@ -34,6 +34,10 @@ export const postService = {
             return docRef.id;
         } catch (error) {
             console.error("Error creating post:", error);
+            const errMsg = (error as any)?.code || (error as any)?.message || String(error);
+            if (/permission|PERMISSION_DENIED/i.test(errMsg)) {
+                throw new Error("Permission denied: you must be an authenticated admin to create posts.");
+            }
             throw error;
         }
     },
@@ -115,6 +119,10 @@ export const postService = {
             return downloadURL;
         } catch (error) {
             console.error("Error uploading file:", error);
+            const errMsg = (error as any)?.code || (error as any)?.message || String(error);
+            if (/permission|PERMISSION_DENIED/i.test(errMsg)) {
+                throw new Error("Permission denied: you must be an authenticated admin to upload files.");
+            }
             throw error;
         }
     },
@@ -125,12 +133,11 @@ export const postService = {
         onError?: (error: Error) => void
     ) {
         try {
+            // SIMPLIFIED QUERY: Removed multiple orderBy clauses to avoid needing a composite index.
+            // We only filter by status and visibility here. Sorting is done client-side.
             const constraints: QueryConstraint[] = [
                 where("status", "==", "published"),
-                where("visibility", "in", ["public", "private"]),
-                orderBy("isPinned", "desc"),
-                orderBy("priority", "desc"),
-                orderBy("createdAt", "desc")
+                where("visibility", "in", ["public", "private"])
             ];
 
             const q = query(collection(db, COLLECTION_NAME), ...constraints);
@@ -139,7 +146,7 @@ export const postService = {
                 q,
                 (querySnapshot) => {
                     const now = new Date();
-                    const posts = querySnapshot.docs
+                    let posts = querySnapshot.docs
                         .map(doc => ({ id: doc.id, ...doc.data() } as Post))
                         .filter(post => {
                             // Filter scheduled and expired posts
@@ -155,10 +162,35 @@ export const postService = {
                             return true;
                         });
 
+                    // CLIENT-SIDE SORTING: Pinned > Priority > Date
+                    posts.sort((a, b) => {
+                        // 1. Pinned active posts first
+                        if (a.isPinned !== b.isPinned) {
+                            return a.isPinned ? -1 : 1;
+                        }
+
+                        // 2. Priority: emergency > high > normal
+                        const priorityOrder = { emergency: 0, high: 1, normal: 2 };
+                        const pA = priorityOrder[a.priority] ?? 2;
+                        const pB = priorityOrder[b.priority] ?? 2;
+                        if (pA !== pB) {
+                            return pA - pB;
+                        }
+
+                        // 3. Date descending (newest first)
+                        const dateA = a.createdAt?.seconds ?? 0;
+                        const dateB = b.createdAt?.seconds ?? 0;
+                        return dateB - dateA;
+                    });
+
                     callback(posts);
                 },
                 (error) => {
                     console.error("Error listening to active posts:", error);
+                    // If we still get an index error (unlikely with this simple query), log it clearly
+                    if (error.code === 'failed-precondition') {
+                        console.error("Firestore Index Required. Please check console link.");
+                    }
                     if (onError) onError(error as Error);
                 }
             );
@@ -167,7 +199,7 @@ export const postService = {
         } catch (error) {
             console.error("Error setting up listener:", error);
             callback([]);
-            return () => {};
+            return () => { };
         }
     },
 
@@ -218,7 +250,7 @@ export const postService = {
         } catch (error) {
             console.error("Error setting up listener:", error);
             callback([]);
-            return () => {};
+            return () => { };
         }
     },
 
@@ -228,7 +260,7 @@ export const postService = {
             // Get all user notification tokens
             const tokensSnapshot = await getDocs(collection(db, "userNotificationTokens"));
             const tokens: string[] = [];
-            
+
             tokensSnapshot.forEach((docSnapshot) => {
                 const token = docSnapshot.data().token;
                 if (token) {
